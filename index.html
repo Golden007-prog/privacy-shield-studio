@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.tailwindcss.com https://unpkg.com 'sha256-y+VvdQlgaKgNG8XD9rskgF/KKSSaAojmbJxICEtbYIU='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'; worker-src 'none'; manifest-src 'self'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#090A0F">
+
+  <title>PrivacyShield Studio · Client-Side Privacy &amp; AI Data Sanitizer</title>
+  <meta name="description" content="100% client-side privacy &amp; AI security toolkit. Strip hidden image EXIF/GPS data, scrub API keys and PII before pasting into LLMs, clean tracking URLs, and generate cryptographic secrets locally in your browser.">
+  <meta name="keywords" content="privacy tools, ai security, exif remover, gps metadata stripper, secret scrubber, pii redaction, url tracking cleaner, password generator, passphrase generator, cybersecurity, developer tools">
+  <meta name="author" content="reseachrandomv">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://reseachrandomv.github.io/privacy-shield-studio/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="PrivacyShield Studio">
+  <meta property="og:title" content="PrivacyShield Studio · Client-Side Privacy &amp; AI Data Sanitizer">
+  <meta property="og:description" content="Scrub API keys &amp; PII before pasting into LLMs, strip EXIF/GPS from photos, clean tracking URLs, and generate crypto-grade secrets. 0 bytes leave your browser.">
+  <meta property="og:url" content="https://reseachrandomv.github.io/privacy-shield-studio/">
+  <meta property="og:image" content="https://reseachrandomv.github.io/privacy-shield-studio/preview.png">
+  <meta property="og:image:alt" content="PrivacyShield Studio dashboard with secret scrubber, EXIF stripper, URL cleaner and crypto generator">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="PrivacyShield Studio · Client-Side Privacy &amp; AI Data Sanitizer">
+  <meta name="twitter:description" content="Scrub secrets before you paste into AI, strip photo GPS data, clean tracking links. 100% local, 0 bytes uploaded.">
+  <meta name="twitter:image" content="https://reseachrandomv.github.io/privacy-shield-studio/preview.png">
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2310b981'/%3E%3Cstop offset='1' stop-color='%2306b6d4'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M32 4 8 13v17c0 15.5 10.2 26.6 24 30 13.8-3.4 24-14.5 24-30V13L32 4Z' fill='url(%23g)'/%3E%3Cpath d='m22 32 7 7 13-14' fill='none' stroke='%23090A0F' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+  <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','ui-sans-serif','system-ui','-apple-system','Segoe UI','sans-serif'],mono:['JetBrains Mono','ui-monospace','SFMono-Regular','Menlo','monospace']},colors:{obsidian:'#090A0F'},boxShadow:{glass:'0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06)'}}}};</script>
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js" defer></script>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body class="min-h-full bg-obsidian text-zinc-200 font-sans antialiased selection:bg-emerald-400/30 selection:text-white">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <div class="ambient" aria-hidden="true">
+    <div class="ambient-blob ambient-blob--emerald"></div>
+    <div class="ambient-blob ambient-blob--cyan"></div>
+    <div class="ambient-blob ambient-blob--teal"></div>
+    <div class="ambient-grid"></div>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="site-header sticky top-0 z-40 border-b border-white/10 bg-obsidian/60 backdrop-blur-xl">
+    <div class="mx-auto flex max-w-7xl flex-wrap items-center gap-3 px-4 py-3 sm:px-6 2xl:flex-nowrap 2xl:gap-6">
+      <a href="#" id="brand-link" class="flex shrink-0 items-center gap-3" aria-label="PrivacyShield Studio home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 64 64" class="h-9 w-9">
+            <defs><linearGradient id="brandGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#10b981"/><stop offset="1" stop-color="#06b6d4"/></linearGradient></defs>
+            <path d="M32 4 8 13v17c0 15.5 10.2 26.6 24 30 13.8-3.4 24-14.5 24-30V13L32 4Z" fill="url(#brandGrad)"/>
+            <path d="m22 32 7 7 13-14" fill="none" stroke="#090A0F" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span class="leading-tight">
+          <span class="block text-base font-semibold tracking-tight text-white">PrivacyShield <span class="text-gradient">Studio</span></span>
+          <span class="hidden text-[11px] font-medium uppercase tracking-[0.18em] text-zinc-500 sm:block">Client-Side Privacy &amp; AI Sanitizer</span>
+        </span>
+      </a>
+
+      <button type="button" id="trust-pill" class="trust-pill order-2 ml-auto 2xl:order-3" aria-haspopup="dialog" aria-controls="trust-modal">
+        <span class="trust-dot" aria-hidden="true"></span>
+        <span class="hidden sm:inline">🟢 Offline-Ready: 0 Bytes Leave Your Browser</span>
+        <span class="sm:hidden">🟢 0 Bytes Uploaded</span>
+        <i data-lucide="info" class="h-3.5 w-3.5 opacity-70" aria-hidden="true"></i>
+      </button>
+
+      <nav class="tab-nav order-3 w-full 2xl:order-2 2xl:mx-auto 2xl:w-auto" aria-label="Tools">
+        <div id="tablist" role="tablist" aria-label="PrivacyShield tools" class="tab-scroller">
+          <button type="button" role="tab" id="tab-scrubber" class="tab-btn is-active" data-tab="scrubber" aria-selected="true" aria-controls="panel-scrubber" tabindex="0">
+            <i data-lucide="scan-text" class="h-4 w-4" aria-hidden="true"></i><span>Secret Scrubber</span>
+          </button>
+          <button type="button" role="tab" id="tab-exif" class="tab-btn" data-tab="exif" aria-selected="false" aria-controls="panel-exif" tabindex="-1">
+            <i data-lucide="image-off" class="h-4 w-4" aria-hidden="true"></i><span>EXIF Stripper</span>
+          </button>
+          <button type="button" role="tab" id="tab-urls" class="tab-btn" data-tab="urls" aria-selected="false" aria-controls="panel-urls" tabindex="-1">
+            <i data-lucide="link-2-off" class="h-4 w-4" aria-hidden="true"></i><span>URL Unclutter</span>
+          </button>
+          <button type="button" role="tab" id="tab-crypto" class="tab-btn" data-tab="crypto" aria-selected="false" aria-controls="panel-crypto" tabindex="-1">
+            <i data-lucide="key-round" class="h-4 w-4" aria-hidden="true"></i><span>Crypto Generator</span>
+          </button>
+          <span id="tab-indicator" class="tab-indicator" aria-hidden="true"></span>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="relative z-10 mx-auto max-w-7xl px-4 pb-16 pt-8 sm:px-6" tabindex="-1">
+
+    <section class="mb-8 text-center sm:mb-10" aria-labelledby="hero-title">
+      <p class="eyebrow mx-auto mb-4"><i data-lucide="shield-check" class="h-3.5 w-3.5" aria-hidden="true"></i> Zero uploads · Zero tracking · Zero accounts</p>
+      <h1 id="hero-title" class="text-3xl font-bold tracking-tight text-white sm:text-5xl">Sanitize before you <span class="text-gradient">share</span>.</h1>
+      <p class="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-zinc-400 sm:text-base">Scrub secrets from prompts, strip GPS from photos, clean tracking links and mint crypto-grade keys. Everything runs locally with native Web APIs, so nothing ever leaves this tab.</p>
+    </section>
+
+    <!-- ============ MODULE 1: SECRET SCRUBBER ============ -->
+    <section id="panel-scrubber" role="tabpanel" aria-labelledby="tab-scrubber" class="tab-panel is-active" data-panel="scrubber" tabindex="0">
+      <div class="panel-head">
+        <div>
+          <h2 class="panel-title"><i data-lucide="scan-text" class="h-5 w-5 text-emerald-400" aria-hidden="true"></i> AI Prompt &amp; Code Secret Scrubber</h2>
+          <p class="panel-sub">Paste code, logs or prompts. Emails, IPs, keys and tokens are replaced with clean placeholders in real time before you send anything to ChatGPT, Claude or Grok.</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button type="button" id="scrub-sample-btn" class="btn btn-ghost"><i data-lucide="flask-conical" class="h-4 w-4" aria-hidden="true"></i> Load Sample Leak Data</button>
+          <button type="button" id="scrub-clear-btn" class="btn btn-ghost"><i data-lucide="eraser" class="h-4 w-4" aria-hidden="true"></i> Clear</button>
+          <button type="button" id="scrub-copy-btn" class="btn btn-primary" disabled><i data-lucide="clipboard-check" class="h-4 w-4" aria-hidden="true"></i> Copy Clean Prompt</button>
+        </div>
+      </div>
+
+      <div class="glass-card mb-5 p-4 sm:p-5">
+        <div class="mb-3 flex items-center justify-between gap-3">
+          <h3 class="section-label"><i data-lucide="sliders-horizontal" class="h-4 w-4" aria-hidden="true"></i> Redaction rules</h3>
+          <div class="flex gap-2">
+            <button type="button" id="rules-all-on" class="chip-btn">Enable all</button>
+            <button type="button" id="rules-all-off" class="chip-btn">Disable all</button>
+          </div>
+        </div>
+        <div id="scrub-rules" class="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-4" role="group" aria-label="Redaction rule toggles">
+          <label class="rule-toggle" for="rule-email">
+            <span class="rule-text"><span class="rule-name">Email addresses</span><code class="rule-tag">[REDACTED_EMAIL]</code></span>
+            <span class="switch"><input type="checkbox" id="rule-email" class="switch-input" data-rule="email" checked><span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span></span>
+          </label>
+          <label class="rule-toggle" for="rule-ip">
+            <span class="rule-text"><span class="rule-name">IPv4 &amp; IPv6</span><code class="rule-tag">[REDACTED_IP]</code></span>
+            <span class="switch"><input type="checkbox" id="rule-ip" class="switch-input" data-rule="ip" checked><span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span></span>
+          </label>
+          <label class="rule-toggle" for="rule-phone">
+            <span class="rule-text"><span class="rule-name">Phone numbers</span><code class="rule-tag">[REDACTED_PHONE]</code></span>
+            <span class="switch"><input type="checkbox" id="rule-phone" class="switch-input" data-rule="phone" checked><span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span></span>
+          </label>
+          <label class="rule-toggle" for="rule-card">
+            <span class="rule-text"><span class="rule-name">Credit cards</span><code class="rule-tag">[REDACTED_CARD]</code></span>
+            <span class="switch"><input type="checkbox" id="rule-card" class="switch-input" data-rule="card" checked><span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span></span>
+          </label>
+          <label class="rule-toggle" for="rule-apikey">
+            <span class="rule-text"><span class="rule-name">API keys <span class="rule-hint">sk-, sk-ant-, ghp_, gho_, github_pat_, AKIA</span></span><code class="rule-tag">[REDACTED_API_KEY]</code></span>
+            <span class="switch"><input type="checkbox" id="rule-apikey" class="switch-input" data-rule="apikey" checked><span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span></span>
+          </label>
+          <label class="rule-toggle" for="rule-token">
+            <span class="rule-text"><span class="rule-name">Bearer tokens &amp; JWTs</span><code class="rule-tag">[REDACTED_TOKEN]</code></span>
+            <span class="switch"><input type="checkbox" id="rule-token" class="switch-input" data-rule="token" checked><span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span></span>
+          </label>
+          <label class="rule-toggle" for="rule-privatekey">
+            <span class="rule-text"><span class="rule-name">Private SSH/RSA keys</span><code class="rule-tag">[REDACTED_PRIVATE_KEY]</code></span>
+            <span class="switch"><input type="checkbox" id="rule-privatekey" class="switch-input" data-rule="privatekey" checked><span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span></span>
+          </label>
+          <div class="rule-toggle rule-toggle--info">
+            <span class="rule-text"><span class="rule-name">Live detection</span><span class="rule-hint">Output updates as you type. Nothing is sent anywhere.</span></span>
+            <i data-lucide="zap" class="h-4 w-4 text-emerald-400" aria-hidden="true"></i>
+          </div>
+        </div>
+      </div>
+
+      <div id="scrub-badges" class="glass-card mb-5 flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between" aria-live="polite" aria-atomic="true">
+        <div class="flex items-center gap-3">
+          <span id="scrub-total-badge" class="count-badge" data-count="0">0</span>
+          <p id="scrub-summary" class="text-sm text-zinc-300">No secrets detected yet. Paste something or load the sample.</p>
+        </div>
+        <ul id="scrub-chips" class="flex flex-wrap gap-2" aria-label="Secrets scrubbed by type"></ul>
+      </div>
+
+      <div class="split-pane">
+        <div class="glass-card pane">
+          <div class="pane-head">
+            <label for="scrub-input" class="section-label"><i data-lucide="file-warning" class="h-4 w-4 text-amber-300" aria-hidden="true"></i> Raw Input</label>
+            <span class="meta-text"><span id="scrub-input-count">0</span> chars · <span id="scrub-input-lines">0</span> lines</span>
+          </div>
+          <textarea id="scrub-input" class="code-area" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="Paste code, logs, .env files or prompts here…" aria-describedby="scrub-input-help"></textarea>
+          <p id="scrub-input-help" class="pane-foot">Processed locally with JavaScript RegExp. Press <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>Enter</kbd> to copy the clean output.</p>
+        </div>
+        <div class="glass-card pane pane--clean">
+          <div class="pane-head">
+            <label for="scrub-output" class="section-label"><i data-lucide="shield-check" class="h-4 w-4 text-emerald-400" aria-hidden="true"></i> Sanitized Output</label>
+            <span class="meta-text"><span id="scrub-output-count">0</span> chars · <span id="scrub-output-lines">0</span> lines</span>
+          </div>
+          <textarea id="scrub-output" class="code-area code-area--clean" readonly spellcheck="false" placeholder="Your clean, AI-safe prompt appears here." aria-live="off"></textarea>
+          <p class="pane-foot">Read-only. Placeholders like <code class="redact-token">[REDACTED_EMAIL]</code> keep context for the model without exposing data.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MODULE 2: EXIF STRIPPER ============ -->
+    <section id="panel-exif" role="tabpanel" aria-labelledby="tab-exif" class="tab-panel" data-panel="exif" tabindex="0" hidden>
+      <div class="panel-head">
+        <div>
+          <h2 class="panel-title"><i data-lucide="image-off" class="h-5 w-5 text-cyan-400" aria-hidden="true"></i> Local Image EXIF &amp; GPS Metadata Stripper</h2>
+          <p class="panel-sub">Phone photos hide GPS coordinates, camera serials and editing history. Inspect the binary headers, then re-encode through an offscreen canvas to drop every metadata chunk.</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button type="button" id="exif-reset-btn" class="btn btn-ghost" disabled><i data-lucide="rotate-ccw" class="h-4 w-4" aria-hidden="true"></i> Reset</button>
+          <button type="button" id="exif-download-btn" class="btn btn-primary" disabled><i data-lucide="download" class="h-4 w-4" aria-hidden="true"></i> Download Clean Image</button>
+        </div>
+      </div>
+
+      <div id="exif-dropzone" class="dropzone glass-card" role="button" tabindex="0" aria-describedby="exif-drop-help" aria-label="Upload an image: drag and drop or press Enter to browse">
+        <input type="file" id="exif-file-input" class="sr-only" accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp" tabindex="-1" aria-hidden="true">
+        <div class="dropzone-inner">
+          <span class="dropzone-icon" aria-hidden="true"><i data-lucide="upload-cloud" class="h-8 w-8"></i></span>
+          <p class="text-base font-semibold text-white">Drop an image here or <span class="text-gradient underline decoration-dotted underline-offset-4">browse</span></p>
+          <p id="exif-drop-help" class="mt-1 text-xs text-zinc-500">PNG, JPG/JPEG or WebP · read with FileReader, never uploaded</p>
+        </div>
+      </div>
+
+      <div id="exif-workspace" class="mt-5 grid gap-5 lg:grid-cols-5" hidden>
+        <div class="glass-card p-5 lg:col-span-2">
+          <h3 class="section-label mb-4"><i data-lucide="microscope" class="h-4 w-4" aria-hidden="true"></i> Metadata inspection</h3>
+          <dl class="meta-grid">
+            <dt>File name</dt><dd id="exif-filename" class="font-mono break-all">-</dd>
+            <dt>MIME type</dt><dd id="exif-mime" class="font-mono">-</dd>
+            <dt>Original size</dt><dd id="exif-size" class="font-mono">-</dd>
+            <dt>Dimensions</dt><dd id="exif-dimensions" class="font-mono">-</dd>
+            <dt>GPS location</dt><dd><span id="exif-gps-status" class="status-pill" data-state="unknown">Unknown</span></dd>
+            <dt>Metadata found</dt><dd><span id="exif-meta-status" class="status-pill" data-state="unknown">Unknown</span></dd>
+          </dl>
+          <h4 class="mt-5 mb-2 text-xs font-semibold uppercase tracking-wider text-zinc-500">Detected segments</h4>
+          <ul id="exif-segments" class="segment-list" aria-label="Detected metadata segments">
+            <li class="segment-item" data-segment="exif"><span>EXIF / APP1</span><span class="segment-state" data-state="unknown">-</span></li>
+            <li class="segment-item" data-segment="jfif"><span>JFIF / APP0</span><span class="segment-state" data-state="unknown">-</span></li>
+            <li class="segment-item" data-segment="xmp"><span>XMP packet</span><span class="segment-state" data-state="unknown">-</span></li>
+            <li class="segment-item" data-segment="icc"><span>ICC color profile</span><span class="segment-state" data-state="unknown">-</span></li>
+            <li class="segment-item" data-segment="pngtext"><span>PNG text chunks (tEXt/iTXt/zTXt)</span><span class="segment-state" data-state="unknown">-</span></li>
+            <li class="segment-item" data-segment="gps"><span>GPS IFD</span><span class="segment-state" data-state="unknown">-</span></li>
+          </ul>
+          <p id="exif-segment-note" class="mt-3 text-xs leading-relaxed text-zinc-500">Scanned directly from the file bytes with DataView.</p>
+        </div>
+
+        <div class="flex flex-col gap-5 lg:col-span-3">
+          <div class="glass-card p-5">
+            <div class="grid gap-4 sm:grid-cols-2">
+              <figure class="preview-frame">
+                <figcaption class="preview-label"><span class="dot dot--warn" aria-hidden="true"></span> Original</figcaption>
+                <img id="exif-preview-before" class="preview-img" alt="Original uploaded image preview" decoding="async">
+              </figure>
+              <figure class="preview-frame">
+                <figcaption class="preview-label"><span class="dot dot--ok" aria-hidden="true"></span> Clean</figcaption>
+                <img id="exif-preview-after" class="preview-img" alt="Cleaned image preview with metadata removed" decoding="async">
+                <div id="exif-processing" class="preview-loading" hidden><span class="spinner" aria-hidden="true"></span><span>Re-encoding…</span></div>
+              </figure>
+            </div>
+          </div>
+
+          <div class="glass-card p-5">
+            <h3 class="section-label mb-4"><i data-lucide="settings-2" class="h-4 w-4" aria-hidden="true"></i> Export settings</h3>
+            <div class="grid gap-5 sm:grid-cols-2">
+              <div>
+                <label for="exif-format" class="field-label">Output format</label>
+                <select id="exif-format" class="field-input">
+                  <option value="image/png">PNG (lossless)</option>
+                  <option value="image/jpeg" selected>JPEG</option>
+                  <option value="image/webp">WebP</option>
+                </select>
+              </div>
+              <div>
+                <div class="flex items-center justify-between">
+                  <label for="exif-quality" class="field-label">Quality</label>
+                  <output id="exif-quality-value" for="exif-quality" class="value-pill">92%</output>
+                </div>
+                <input type="range" id="exif-quality" class="range" min="10" max="100" step="1" value="92" aria-describedby="exif-quality-help">
+                <p id="exif-quality-help" class="mt-1 text-[11px] text-zinc-500">Disabled for PNG, which is always lossless.</p>
+              </div>
+            </div>
+            <div id="exif-compare" class="compare-badge mt-5" aria-live="polite">
+              <div class="compare-col"><span class="compare-k">Before</span><span id="exif-size-before" class="compare-v">-</span></div>
+              <i data-lucide="arrow-right" class="h-4 w-4 text-zinc-500" aria-hidden="true"></i>
+              <div class="compare-col"><span class="compare-k">After</span><span id="exif-size-after" class="compare-v">-</span></div>
+              <span id="exif-size-delta" class="delta-pill" data-trend="neutral">-</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <canvas id="exif-canvas" class="hidden" width="1" height="1" aria-hidden="true"></canvas>
+    </section>
+
+    <!-- ============ MODULE 3: URL UNCLUTTER ============ -->
+    <section id="panel-urls" role="tabpanel" aria-labelledby="tab-urls" class="tab-panel" data-panel="urls" tabindex="0" hidden>
+      <div class="panel-head">
+        <div>
+          <h2 class="panel-title"><i data-lucide="link-2-off" class="h-5 w-5 text-emerald-400" aria-hidden="true"></i> Bulk URL Unclutter &amp; Tracking Stripper</h2>
+          <p class="panel-sub">Paste up to 50 links. The native URL() parser removes 30+ tracking parameters such as utm_*, fbclid, gclid, msclkid, igshid and _hsenc, and shows exactly what was stripped.</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button type="button" id="urls-sample-btn" class="btn btn-ghost"><i data-lucide="flask-conical" class="h-4 w-4" aria-hidden="true"></i> Load sample</button>
+          <button type="button" id="urls-clear-btn" class="btn btn-ghost"><i data-lucide="eraser" class="h-4 w-4" aria-hidden="true"></i> Clear</button>
+          <button type="button" id="urls-copy-btn" class="btn btn-primary" disabled><i data-lucide="clipboard-copy" class="h-4 w-4" aria-hidden="true"></i> Copy All Clean URLs</button>
+        </div>
+      </div>
+
+      <div class="grid gap-5 lg:grid-cols-5">
+        <div class="glass-card pane lg:col-span-2">
+          <div class="pane-head">
+            <label for="urls-input" class="section-label"><i data-lucide="list" class="h-4 w-4" aria-hidden="true"></i> Links (one per line)</label>
+            <span id="urls-counter" class="meta-text" data-state="ok"><span id="urls-count">0</span> / 50</span>
+          </div>
+          <textarea id="urls-input" class="code-area code-area--tall" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="https://example.com/article?utm_source=twitter&amp;fbclid=IwAR…" aria-describedby="urls-help"></textarea>
+          <div class="mt-3 flex items-center justify-between gap-3">
+            <p id="urls-help" class="pane-foot !mt-0">Lines beyond 50 are ignored. Invalid URLs are flagged.</p>
+            <button type="button" id="urls-clean-btn" class="btn btn-primary shrink-0"><i data-lucide="sparkles" class="h-4 w-4" aria-hidden="true"></i> Clean URLs</button>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-5 lg:col-span-3">
+          <div class="grid grid-cols-3 gap-3" aria-live="polite">
+            <div class="stat-card glass-card"><span class="stat-k">URLs cleaned</span><span id="urls-stat-cleaned" class="stat-v">0</span></div>
+            <div class="stat-card glass-card"><span class="stat-k">Params removed</span><span id="urls-stat-params" class="stat-v">0</span></div>
+            <div class="stat-card glass-card"><span class="stat-k">Invalid</span><span id="urls-stat-invalid" class="stat-v">0</span></div>
+          </div>
+          <div class="glass-card flex-1 p-4 sm:p-5">
+            <h3 class="section-label mb-3"><i data-lucide="git-compare" class="h-4 w-4" aria-hidden="true"></i> Diff breakdown</h3>
+            <ol id="urls-results" class="url-results scroll-glass" aria-label="Cleaned URL results"></ol>
+            <div id="urls-empty" class="empty-state">
+              <i data-lucide="link" class="h-6 w-6" aria-hidden="true"></i>
+              <p>Cleaned links and removed trackers will appear here.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <template id="url-result-template">
+        <li class="url-item">
+          <div class="url-item-head">
+            <span class="url-index font-mono"></span>
+            <span class="url-status" data-state="clean"></span>
+            <button type="button" class="url-copy icon-btn" data-action="copy-url" aria-label="Copy this clean URL"><i data-lucide="copy" class="h-3.5 w-3.5" aria-hidden="true"></i></button>
+          </div>
+          <p class="url-original font-mono" data-role="original"></p>
+          <p class="url-clean font-mono" data-role="clean"></p>
+          <ul class="url-removed" data-role="removed" aria-label="Removed tracking parameters"></ul>
+        </li>
+      </template>
+    </section>
+
+    <!-- ============ MODULE 4: CRYPTO GENERATOR ============ -->
+    <section id="panel-crypto" role="tabpanel" aria-labelledby="tab-crypto" class="tab-panel" data-panel="crypto" tabindex="0" hidden>
+      <div class="panel-head">
+        <div>
+          <h2 class="panel-title"><i data-lucide="key-round" class="h-5 w-5 text-cyan-400" aria-hidden="true"></i> Cryptographic Passphrase &amp; Key Generator</h2>
+          <p class="panel-sub">Powered strictly by <code class="font-mono text-cyan-300">window.crypto.getRandomValues()</code> with rejection sampling. Never Math.random().</p>
+        </div>
+      </div>
+
+      <div class="grid gap-5 lg:grid-cols-5">
+        <div class="glass-card p-5 lg:col-span-2">
+          <div id="crypto-modes" class="segmented" role="radiogroup" aria-label="Generator mode">
+            <button type="button" role="radio" id="mode-password" class="segment is-active" data-mode="password" aria-checked="true" tabindex="0"><i data-lucide="asterisk" class="h-4 w-4" aria-hidden="true"></i><span>Password</span></button>
+            <button type="button" role="radio" id="mode-passphrase" class="segment" data-mode="passphrase" aria-checked="false" tabindex="-1"><i data-lucide="whole-word" class="h-4 w-4" aria-hidden="true"></i><span>Passphrase</span></button>
+            <button type="button" role="radio" id="mode-key" class="segment" data-mode="key" aria-checked="false" tabindex="-1"><i data-lucide="binary" class="h-4 w-4" aria-hidden="true"></i><span>API Secret</span></button>
+          </div>
+
+          <div id="opts-password" class="mode-options" data-mode-panel="password">
+            <p class="mode-desc">High-entropy random password from your chosen character sets.</p>
+            <div class="flex items-center justify-between">
+              <label for="pw-length" class="field-label">Length</label>
+              <output id="pw-length-value" for="pw-length" class="value-pill">24</output>
+            </div>
+            <input type="range" id="pw-length" class="range" min="8" max="128" step="1" value="24">
+            <div class="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <label class="opt-check"><input type="checkbox" id="pw-upper" data-charset="upper" checked><span>Uppercase <code>A-Z</code></span></label>
+              <label class="opt-check"><input type="checkbox" id="pw-lower" data-charset="lower" checked><span>Lowercase <code>a-z</code></span></label>
+              <label class="opt-check"><input type="checkbox" id="pw-digits" data-charset="digits" checked><span>Digits <code>0-9</code></span></label>
+              <label class="opt-check"><input type="checkbox" id="pw-symbols" data-charset="symbols" checked><span>Symbols <code>!@#$</code></span></label>
+              <label class="opt-check sm:col-span-2"><input type="checkbox" id="pw-exclude-ambiguous"><span>Exclude ambiguous <code>0 O o 1 l I |</code></span></label>
+            </div>
+          </div>
+
+          <div id="opts-passphrase" class="mode-options" data-mode-panel="passphrase" hidden>
+            <p class="mode-desc">Memorable Diceware-style passphrase from a built-in word list.</p>
+            <div class="flex items-center justify-between">
+              <label for="pp-words" class="field-label">Word count</label>
+              <output id="pp-words-value" for="pp-words" class="value-pill">6</output>
+            </div>
+            <input type="range" id="pp-words" class="range" min="3" max="12" step="1" value="6">
+            <div class="mt-4">
+              <label for="pp-separator" class="field-label">Separator</label>
+              <select id="pp-separator" class="field-input">
+                <option value="-" selected>Hyphen ( - )</option>
+                <option value=".">Period ( . )</option>
+                <option value="_">Underscore ( _ )</option>
+                <option value=" ">Space</option>
+                <option value="">None</option>
+                <option value="random">Random digit/symbol</option>
+              </select>
+            </div>
+            <div class="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <label class="opt-check"><input type="checkbox" id="pp-capitalize" checked><span>Capitalize words</span></label>
+              <label class="opt-check"><input type="checkbox" id="pp-number"><span>Append a number</span></label>
+            </div>
+            <p id="pp-wordlist-info" class="mt-3 text-[11px] text-zinc-500">Word list size: <span id="pp-wordlist-size" class="font-mono">-</span> words</p>
+          </div>
+
+          <div id="opts-key" class="mode-options" data-mode-panel="key" hidden>
+            <p class="mode-desc">Raw random bytes for .env secrets, HMAC keys and session tokens.</p>
+            <fieldset>
+              <legend class="field-label">Key size</legend>
+              <div class="segmented segmented--sm" role="radiogroup" aria-label="Key size in bytes">
+                <label class="segment-radio"><input type="radio" name="key-bytes" id="key-bytes-16" value="16"><span>16 B · 128-bit</span></label>
+                <label class="segment-radio"><input type="radio" name="key-bytes" id="key-bytes-32" value="32" checked><span>32 B · 256-bit</span></label>
+                <label class="segment-radio"><input type="radio" name="key-bytes" id="key-bytes-64" value="64"><span>64 B · 512-bit</span></label>
+              </div>
+            </fieldset>
+            <fieldset class="mt-4">
+              <legend class="field-label">Encoding</legend>
+              <div class="segmented segmented--sm" role="radiogroup" aria-label="Key encoding">
+                <label class="segment-radio"><input type="radio" name="key-format" id="key-format-hex" value="hex" checked><span>Hex</span></label>
+                <label class="segment-radio"><input type="radio" name="key-format" id="key-format-base64" value="base64"><span>Base64</span></label>
+                <label class="segment-radio"><input type="radio" name="key-format" id="key-format-base64url" value="base64url"><span>Base64url</span></label>
+              </div>
+            </fieldset>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-5 lg:col-span-3">
+          <div class="glass-card p-5">
+            <div class="mb-3 flex items-center justify-between">
+              <label for="crypto-output" class="section-label"><i data-lucide="lock-keyhole" class="h-4 w-4" aria-hidden="true"></i> Generated secret</label>
+              <span id="crypto-output-length" class="meta-text">0 chars</span>
+            </div>
+            <div class="output-wrap">
+              <input type="text" id="crypto-output" class="output-field" readonly spellcheck="false" autocomplete="off" aria-describedby="crypto-entropy-text">
+              <div class="flex gap-2">
+                <button type="button" id="crypto-toggle-visibility" class="icon-btn" aria-pressed="false" aria-label="Hide secret"><i data-lucide="eye" class="h-4 w-4" aria-hidden="true"></i></button>
+                <button type="button" id="crypto-regenerate-btn" class="icon-btn" aria-label="Regenerate"><i data-lucide="refresh-cw" class="h-4 w-4" aria-hidden="true"></i></button>
+                <button type="button" id="crypto-copy-btn" class="btn btn-primary"><i data-lucide="copy" class="h-4 w-4" aria-hidden="true"></i> Copy</button>
+              </div>
+            </div>
+
+            <div class="mt-5">
+              <div class="mb-2 flex flex-wrap items-baseline justify-between gap-2">
+                <p class="text-sm"><span id="crypto-entropy-bits" class="font-mono text-lg font-semibold text-white">0.0</span> <span class="text-zinc-400">bits of entropy</span></p>
+                <span id="crypto-strength-label" class="strength-label" data-strength="0">-</span>
+              </div>
+              <div id="crypto-strength-bar" class="strength-bar" role="meter" aria-label="Secret strength" aria-valuemin="0" aria-valuemax="256" aria-valuenow="0" aria-valuetext="0 bits">
+                <span id="crypto-strength-fill" class="strength-fill" data-strength="0"></span>
+              </div>
+              <p id="crypto-entropy-text" class="mt-2 text-xs text-zinc-400">Crack time: <span id="crypto-crack-time" class="font-medium text-zinc-200">-</span> <span class="text-zinc-500">(assuming 10¹² guesses/second offline attack)</span></p>
+            </div>
+          </div>
+
+          <div class="glass-card p-5">
+            <div class="mb-3 flex items-center justify-between">
+              <h3 class="section-label"><i data-lucide="history" class="h-4 w-4" aria-hidden="true"></i> Recent (last 5, this session only)</h3>
+              <div class="flex items-center gap-3">
+                <label class="opt-check !py-1 text-xs"><input type="checkbox" id="crypto-history-enabled" checked><span>Keep history</span></label>
+                <button type="button" id="crypto-history-clear" class="chip-btn">Clear</button>
+              </div>
+            </div>
+            <ul id="crypto-history" class="history-list" aria-label="Recently generated secrets, masked"></ul>
+            <p id="crypto-history-empty" class="empty-state !py-6"><span>Nothing yet. History lives in memory only and vanishes on reload.</span></p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="relative z-10 border-t border-white/10 bg-obsidian/60 backdrop-blur-xl">
+    <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-6 text-xs text-zinc-500 sm:flex-row sm:px-6">
+      <p>© <span id="footer-year">2026</span> PrivacyShield Studio · Released under the <a href="https://github.com/reseachrandomv/privacy-shield-studio/blob/main/LICENSE" class="footer-link" target="_blank" rel="noopener noreferrer">MIT License</a></p>
+      <div class="flex items-center gap-4">
+        <span class="hidden items-center gap-1.5 sm:inline-flex"><kbd>Alt</kbd>+<kbd>1-4</kbd> switch tools</span>
+        <a href="https://github.com/reseachrandomv/privacy-shield-studio" id="footer-github" class="footer-link inline-flex items-center gap-1.5" target="_blank" rel="noopener noreferrer"><i data-lucide="github" class="h-4 w-4" aria-hidden="true"></i> View source on GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ TRUST MODAL ============ -->
+  <div id="trust-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="trust-modal-title" aria-describedby="trust-modal-desc" hidden>
+    <div class="modal-backdrop" data-close-modal></div>
+    <div class="modal-card glass-card" role="document">
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <span class="modal-icon" aria-hidden="true"><i data-lucide="wifi-off" class="h-5 w-5"></i></span>
+          <h2 id="trust-modal-title" class="text-lg font-semibold text-white">How 0 bytes leave your browser</h2>
+        </div>
+        <button type="button" id="trust-modal-close" class="icon-btn" data-close-modal aria-label="Close dialog"><i data-lucide="x" class="h-4 w-4" aria-hidden="true"></i></button>
+      </div>
+      <p id="trust-modal-desc" class="mt-4 text-sm leading-relaxed text-zinc-300">PrivacyShield Studio is a static page. After the HTML, CSS, fonts and icon library load, every tool runs entirely inside this tab. There is no backend, no analytics, no cookies and no upload endpoint. The page's Content-Security-Policy sets <code class="font-mono text-emerald-300">connect-src 'none'</code>, so the browser itself blocks any fetch, XHR, WebSocket or beacon.</p>
+      <h3 class="mt-5 text-xs font-semibold uppercase tracking-wider text-zinc-500">Native Web APIs doing the work</h3>
+      <ul class="mt-2 grid gap-2 sm:grid-cols-2">
+        <li class="api-item"><i data-lucide="regex" class="h-4 w-4 text-emerald-400" aria-hidden="true"></i><div><strong>RegExp</strong><span>Detects and redacts secrets in your text.</span></div></li>
+        <li class="api-item"><i data-lucide="image" class="h-4 w-4 text-cyan-400" aria-hidden="true"></i><div><strong>FileReader + Canvas.toBlob()</strong><span>Reads and re-encodes images in memory.</span></div></li>
+        <li class="api-item"><i data-lucide="link" class="h-4 w-4 text-emerald-400" aria-hidden="true"></i><div><strong>URL &amp; URLSearchParams</strong><span>Parses links and removes trackers.</span></div></li>
+        <li class="api-item"><i data-lucide="dice-5" class="h-4 w-4 text-cyan-400" aria-hidden="true"></i><div><strong>crypto.getRandomValues()</strong><span>OS-level CSPRNG for keys and passwords.</span></div></li>
+      </ul>
+      <h3 class="mt-5 text-xs font-semibold uppercase tracking-wider text-zinc-500">Verify it yourself</h3>
+      <ol class="verify-list mt-2">
+        <li>Open DevTools (<kbd>F12</kbd> or <kbd>⌘</kbd>+<kbd>⌥</kbd>+<kbd>I</kbd>) and select the <strong>Network</strong> tab.</li>
+        <li>Clear the log, then paste secrets, drop a photo, clean URLs and generate keys.</li>
+        <li>Watch: no new requests appear. Only <code>blob:</code> URLs created locally for downloads.</li>
+        <li>Go further: switch the Network throttle to <strong>Offline</strong>, or disconnect Wi-Fi. Every tool keeps working.</li>
+      </ol>
+      <div class="mt-6 flex justify-end">
+        <button type="button" id="trust-modal-ok" class="btn btn-primary" data-close-modal>Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TOASTS ============ -->
+  <div id="toast-region" class="toast-region" role="status" aria-live="polite" aria-atomic="false"></div>
+  <template id="toast-template">
+    <div class="toast" data-variant="success">
+      <span class="toast-icon" aria-hidden="true"><i data-lucide="check-circle-2" class="h-4 w-4"></i></span>
+      <p class="toast-msg"></p>
+      <button type="button" class="toast-close" aria-label="Dismiss notification"><i data-lucide="x" class="h-3.5 w-3.5" aria-hidden="true"></i></button>
+    </div>
+  </template>
+
+  <noscript>
+    <div class="noscript-banner">PrivacyShield Studio needs JavaScript to run its local tools. No data is ever sent anywhere.</div>
+  </noscript>
+</body>
+</html>
