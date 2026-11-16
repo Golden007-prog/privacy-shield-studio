@@ -29,6 +29,10 @@
   <sub>Fully responsive: the same app on a 390 px phone</sub>
 </p>
 
+<p align="center">
+  ⭐ <b>If PrivacyShield Studio keeps a secret out of an AI chat, please <a href="https://github.com/reseachrandomv/privacy-shield-studio">star the repo</a>.</b> It's free, takes one click, and helps other people find it.
+</p>
+
 ---
 
 ## 🤔 The problem
@@ -252,14 +256,14 @@ Built for current evergreen browsers: **Chrome / Edge, Firefox and Safari 16.4+*
 
 ## 🤝 Contributing
 
-PRs are welcome, especially new secret patterns, tracker parameters and metadata formats.
+Contributions of all sizes are welcome: bug reports, ideas, docs, translations and code. New secret patterns, tracker parameters and metadata formats are especially valuable.
 
-1. Fork the repo and create a branch: `git checkout -b feat/my-improvement`
-2. Keep the architecture: **three static files, no build step, no network calls**. Anything that would need `connect-src` won't be merged.
-3. Test your change in at least two browsers. For new regexes, include a positive and a negative example in the PR description.
-4. Open a pull request describing what changed and why.
+- 🟢 **New here?** Pick a [`good first issue`](https://github.com/reseachrandomv/privacy-shield-studio/labels/good%20first%20issue) or something marked [`help wanted`](https://github.com/reseachrandomv/privacy-shield-studio/labels/help%20wanted).
+- 💬 **Have a question or idea?** Start a thread in [Discussions](https://github.com/reseachrandomv/privacy-shield-studio/discussions).
+- 🐛 **Found a bug?** Use the [bug report form](https://github.com/reseachrandomv/privacy-shield-studio/issues/new/choose).
+- 🔒 **Security issue?** Report it privately: see [SECURITY.md](SECURITY.md).
 
-Found a pattern that slips through, or a false positive? [Open an issue](https://github.com/reseachrandomv/privacy-shield-studio/issues) with a **fake** sample. Never paste real secrets into an issue.
+Read the [contributing guide](CONTRIBUTING.md) for the project principles, file layout and PR checklist. Everyone taking part follows our [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ---
 

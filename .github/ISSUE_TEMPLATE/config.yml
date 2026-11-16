@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Questions & ideas (Discussions)
+    url: https://github.com/reseachrandomv/privacy-shield-studio/discussions
+    about: Ask questions, share how you use PrivacyShield Studio, or float ideas before opening an issue.
+  - name: 🔒 Report a security vulnerability
+    url: https://github.com/reseachrandomv/privacy-shield-studio/security/advisories/new
+    about: Please report security issues privately, not in public issues.
