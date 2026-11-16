@@ -454,7 +454,22 @@
     else scrubSummary.textContent = `${parts.join(', ')} Scrubbed`;
   }
 
-  const renderScrubDebounced = debounce(renderScrub, 90);
+  /* Large pastes are re-scrubbed less often so typing stays responsive. */
+  const LARGE_INPUT = 200000;
+  const HUGE_INPUT = 2000000;
+  let scrubTimer = 0;
+  let warnedHuge = false;
+  function renderScrubDebounced() {
+    const len = scrubInput.value.length;
+    const wait = len > HUGE_INPUT ? 900 : len > LARGE_INPUT ? 450 : 90;
+    if (len > HUGE_INPUT && !warnedHuge) {
+      warnedHuge = true;
+      toast(`Large input (${(len / 1e6).toFixed(1)}M chars). Scrubbing may take a moment.`, 'info', 4000);
+    }
+    if (len <= HUGE_INPUT) warnedHuge = false;
+    window.clearTimeout(scrubTimer);
+    scrubTimer = window.setTimeout(renderScrub, wait);
+  }
 
   function buildSampleLeak() {
     /* Fake, non-functional demo values are assembled at runtime so the source file
@@ -550,6 +565,16 @@
      MODULE 2 · EXIF & GPS stripper
      ========================================================= */
   const MAX_IMAGE_BYTES = 60 * 1024 * 1024;
+  /* Browsers cap canvas size (Chrome ~268 MP, iOS Safari ~16.7 MP). Try a generous
+     tier first, then a mobile-safe tier if the browser refuses to encode. */
+  const CANVAS_TIERS = [
+    { maxArea: 100000000, maxSide: 16384 },
+    { maxArea: 16777216, maxSide: 8192 }
+  ];
+  const fitDims = (w, h, tier) => {
+    const scale = Math.min(1, tier.maxSide / w, tier.maxSide / h, Math.sqrt(tier.maxArea / (w * h)));
+    return { w: Math.max(1, Math.floor(w * scale)), h: Math.max(1, Math.floor(h * scale)), scaled: scale < 1 };
+  };
   const dropzone = $('exif-dropzone');
   const fileInput = $('exif-file-input');
   const exifFormat = $('exif-format');
@@ -875,24 +900,39 @@
     const type = exifFormat.value;
     const quality = Number(exifQuality.value) / 100;
     const canvas = $('exif-canvas');
-    canvas.width = exifState.width;
-    canvas.height = exifState.height;
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (type === 'image/jpeg') {
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
-    ctx.drawImage(exifState.bitmap, 0, 0, canvas.width, canvas.height);
-
     $('exif-processing').hidden = false;
     $('exif-download-btn').disabled = true;
-    const blob = await canvasToBlob(canvas, type, type === 'image/png' ? undefined : quality);
-    if (token !== exifState.encodeToken) return;
+
+    let blob = null;
+    let dims = null;
+    for (let t = 0; t < CANVAS_TIERS.length && !blob; t += 1) {
+      dims = fitDims(exifState.width, exifState.height, CANVAS_TIERS[t]);
+      try {
+        canvas.width = dims.w;
+        canvas.height = dims.h;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) throw new Error('no 2d context');
+        ctx.clearRect(0, 0, dims.w, dims.h);
+        if (type === 'image/jpeg') {
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, dims.w, dims.h);
+        }
+        ctx.drawImage(exifState.bitmap, 0, 0, dims.w, dims.h);
+        blob = await canvasToBlob(canvas, type, type === 'image/png' ? undefined : quality);
+      } catch (err) {
+        blob = null;
+      }
+      if (token !== exifState.encodeToken) return;
+    }
     $('exif-processing').hidden = true;
     if (!blob) {
-      toast('Your browser could not encode this format. Try PNG or JPEG.', 'error');
+      toast('Your browser could not re-encode this image (it may be too large). Try JPEG, or a smaller image.', 'error', 5000);
       return;
+    }
+    exifState.outDims = dims;
+    if (dims.scaled && exifState.scaleNoticeFor !== exifState.file) {
+      exifState.scaleNoticeFor = exifState.file;
+      toast(`Image is larger than your browser's canvas limit, so the clean copy is ${dims.w} × ${dims.h}px.`, 'warning', 5500);
     }
     if (blob.type !== type) {
       toast(`This browser can't export ${type.split('/')[1].toUpperCase()}; saved as ${blob.type.split('/')[1].toUpperCase()} instead.`, 'warning', 4500);
@@ -915,9 +955,10 @@
     const verify = inspectBytes(await blob.arrayBuffer());
     if (token !== exifState.encodeToken) return;
     exifState.verify = verify;
+    const sizeNote = dims.scaled ? ` Output resized to ${dims.w} × ${dims.h}px (canvas limit).` : '';
     $('exif-segment-note').textContent = verify.privacyFound
-      ? `${exifState.baseNote} Warning: the re-encoded output still contains metadata.`
-      : `${exifState.baseNote} Verified: the clean output has 0 EXIF, GPS, XMP or text chunks.`;
+      ? `${exifState.baseNote}${sizeNote} Warning: the re-encoded output still contains metadata.`
+      : `${exifState.baseNote}${sizeNote} Verified: the clean output has 0 EXIF, GPS, XMP or text chunks.`;
     $('exif-download-btn').disabled = false;
     store.set('pss.exifFormat', type);
     store.set('pss.exifQuality', Number(exifQuality.value));
@@ -930,7 +971,7 @@
     if (exifState.beforeUrl) URL.revokeObjectURL(exifState.beforeUrl);
     if (exifState.afterUrl) URL.revokeObjectURL(exifState.afterUrl);
     if (exifState.bitmap && typeof exifState.bitmap.close === 'function') exifState.bitmap.close();
-    Object.assign(exifState, { file: null, bitmap: null, width: 0, height: 0, beforeUrl: '', afterUrl: '', cleanBlob: null, report: null, verify: null, baseNote: '' });
+    Object.assign(exifState, { file: null, bitmap: null, width: 0, height: 0, beforeUrl: '', afterUrl: '', cleanBlob: null, report: null, verify: null, baseNote: '', outDims: null });
     $('exif-preview-before').removeAttribute('src');
     $('exif-preview-after').removeAttribute('src');
     $('exif-workspace').hidden = true;
@@ -950,12 +991,29 @@
     if (!silent) toast('Image cleared from memory', 'info');
   }
 
+  function setExifBusy(busy) {
+    dropzone.classList.toggle('is-busy', busy);
+    dropzone.setAttribute('aria-busy', String(busy));
+    if (busy) $('exif-download-btn').disabled = true;
+  }
+
   async function handleFile(file) {
-    if (!file) return;
+    if (!file || dropzone.classList.contains('is-busy')) return;
+    setExifBusy(true);
+    try {
+      await loadFile(file);
+    } finally {
+      setExifBusy(false);
+      if (exifState.cleanBlob) $('exif-download-btn').disabled = false;
+    }
+  }
+
+  async function loadFile(file) {
     if (file.size > MAX_IMAGE_BYTES) {
       toast(`File is too large (${formatBytes(file.size)}). Limit is ${formatBytes(MAX_IMAGE_BYTES)}.`, 'error');
       return;
     }
+    if (file.size > 8 * 1024 * 1024) toast(`Reading ${formatBytes(file.size)} image locally…`, 'info', 2500);
     let buffer;
     try {
       buffer = await file.arrayBuffer();
@@ -965,7 +1023,7 @@
     }
     const report = inspectBytes(buffer);
     if (!report.mime) {
-      toast('Unsupported file. Use PNG, JPG/JPEG or WebP.', 'error');
+      toast(`"${file.name || 'This file'}" is not a PNG, JPG/JPEG or WebP image.`, 'error');
       return;
     }
     let bitmap;
@@ -1103,6 +1161,7 @@
   function cleanUrl(line) {
     const input = line.trim();
     const invalid = { input, valid: false, clean: input, removed: [] };
+    if (/\s/.test(input)) return invalid;
     let candidate = input;
     if (!/^[a-z][a-z0-9+.-]*:/i.test(candidate)) {
       if (/^(?:www\.)?[a-z0-9-]+(?:\.[a-z0-9-]+)+(?:[/:?#]|$)/i.test(candidate) && !/\s/.test(candidate)) candidate = `https://${candidate}`;
@@ -1374,19 +1433,24 @@
     return { value, bits: size * 8 };
   }
 
+  /* Strength label and crack time are derived from the same number: the average
+     time to brute-force the secret offline (half the keyspace at 10^12 guesses/s). */
   const STRENGTH_LABELS = ['-', 'Very weak', 'Weak', 'Fair', 'Strong', 'Excellent'];
+  const SECONDS_PER_YEAR = 365.25 * 24 * 3600;
+  const crackSeconds = (bits) => Math.pow(2, bits - 1) / ATTACK_GUESSES_PER_SECOND;
   function strengthLevel(bits) {
     if (bits <= 0) return 0;
-    if (bits < 28) return 1;
-    if (bits < 36) return 2;
-    if (bits < 60) return 3;
-    if (bits < 80) return 4;
+    const s = crackSeconds(bits);
+    if (s < 1) return 1;                          /* Instantly */
+    if (s < 30 * 24 * 3600) return 2;             /* under a month */
+    if (s < 100 * SECONDS_PER_YEAR) return 3;     /* under a century */
+    if (s < 1e6 * SECONDS_PER_YEAR) return 4;     /* under a million years */
     return 5;
   }
 
   function crackTime(bits) {
     if (bits <= 0) return '-';
-    const seconds = Math.pow(2, bits - 1) / ATTACK_GUESSES_PER_SECOND;
+    const seconds = crackSeconds(bits);
     if (seconds < 1) return 'Instantly';
     const steps = [['second', 60], ['minute', 60], ['hour', 24], ['day', 365.25]];
     let v = seconds;
@@ -1646,7 +1710,7 @@
     const fromHash = window.location.hash.replace('#', '');
     const initial = TABS.includes(fromHash) ? fromHash : store.get('pss.activeTab', 'scrubber');
     activateTab(initial, { updateHash: TABS.includes(fromHash) });
-    generateSecret({ record: false });
+    generateSecret();
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(positionIndicator);
     window.setTimeout(positionIndicator, 300);
   }

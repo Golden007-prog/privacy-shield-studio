@@ -52,7 +52,7 @@
   <!-- ============ HEADER ============ -->
   <header class="site-header sticky top-0 z-40 border-b border-white/10 bg-obsidian/60 backdrop-blur-xl">
     <div class="mx-auto flex max-w-7xl flex-wrap items-center gap-3 px-4 py-3 sm:px-6 2xl:flex-nowrap 2xl:gap-6">
-      <a href="#" id="brand-link" class="flex shrink-0 items-center gap-3" aria-label="PrivacyShield Studio home">
+      <a href="#" id="brand-link" class="flex shrink-0 items-center gap-2.5 sm:gap-3" aria-label="PrivacyShield Studio home">
         <span class="brand-mark" aria-hidden="true">
           <svg viewBox="0 0 64 64" class="h-9 w-9">
             <defs><linearGradient id="brandGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#10b981"/><stop offset="1" stop-color="#06b6d4"/></linearGradient></defs>
@@ -62,30 +62,30 @@
         </span>
         <span class="leading-tight">
           <span class="block text-base font-semibold tracking-tight text-white">PrivacyShield <span class="text-gradient">Studio</span></span>
-          <span class="hidden text-[11px] font-medium uppercase tracking-[0.18em] text-zinc-500 sm:block">Client-Side Privacy &amp; AI Sanitizer</span>
+          <span class="hidden text-[11px] font-medium uppercase tracking-[0.18em] text-zinc-400 sm:block">Client-Side Privacy &amp; AI Sanitizer</span>
         </span>
       </a>
 
       <button type="button" id="trust-pill" class="trust-pill order-2 ml-auto 2xl:order-3" aria-haspopup="dialog" aria-controls="trust-modal">
         <span class="trust-dot" aria-hidden="true"></span>
         <span class="hidden sm:inline">🟢 Offline-Ready: 0 Bytes Leave Your Browser</span>
-        <span class="sm:hidden">🟢 0 Bytes Uploaded</span>
-        <i data-lucide="info" class="h-3.5 w-3.5 opacity-70" aria-hidden="true"></i>
+        <span class="sm:hidden">0 Bytes Uploaded</span>
+        <i data-lucide="info" class="hidden h-3.5 w-3.5 opacity-70 sm:block" aria-hidden="true"></i>
       </button>
 
       <nav class="tab-nav order-3 w-full 2xl:order-2 2xl:mx-auto 2xl:w-auto" aria-label="Tools">
         <div id="tablist" role="tablist" aria-label="PrivacyShield tools" class="tab-scroller">
           <button type="button" role="tab" id="tab-scrubber" class="tab-btn is-active" data-tab="scrubber" aria-selected="true" aria-controls="panel-scrubber" tabindex="0">
-            <i data-lucide="scan-text" class="h-4 w-4" aria-hidden="true"></i><span>Secret Scrubber</span>
+            <i data-lucide="scan-text" class="h-4 w-4" aria-hidden="true"></i><span class="tab-label">Secret Scrubber</span><span class="tab-label-short">Scrubber</span>
           </button>
           <button type="button" role="tab" id="tab-exif" class="tab-btn" data-tab="exif" aria-selected="false" aria-controls="panel-exif" tabindex="-1">
-            <i data-lucide="image-off" class="h-4 w-4" aria-hidden="true"></i><span>EXIF Stripper</span>
+            <i data-lucide="image-off" class="h-4 w-4" aria-hidden="true"></i><span class="tab-label">EXIF Stripper</span><span class="tab-label-short">EXIF</span>
           </button>
           <button type="button" role="tab" id="tab-urls" class="tab-btn" data-tab="urls" aria-selected="false" aria-controls="panel-urls" tabindex="-1">
-            <i data-lucide="link-2-off" class="h-4 w-4" aria-hidden="true"></i><span>URL Unclutter</span>
+            <i data-lucide="link-2-off" class="h-4 w-4" aria-hidden="true"></i><span class="tab-label">URL Unclutter</span><span class="tab-label-short">URLs</span>
           </button>
           <button type="button" role="tab" id="tab-crypto" class="tab-btn" data-tab="crypto" aria-selected="false" aria-controls="panel-crypto" tabindex="-1">
-            <i data-lucide="key-round" class="h-4 w-4" aria-hidden="true"></i><span>Crypto Generator</span>
+            <i data-lucide="key-round" class="h-4 w-4" aria-hidden="true"></i><span class="tab-label">Crypto Generator</span><span class="tab-label-short">Crypto</span>
           </button>
           <span id="tab-indicator" class="tab-indicator" aria-hidden="true"></span>
         </div>
@@ -205,7 +205,7 @@
         <div class="dropzone-inner">
           <span class="dropzone-icon" aria-hidden="true"><i data-lucide="upload-cloud" class="h-8 w-8"></i></span>
           <p class="text-base font-semibold text-white">Drop an image here or <span class="text-gradient underline decoration-dotted underline-offset-4">browse</span></p>
-          <p id="exif-drop-help" class="mt-1 text-xs text-zinc-500">PNG, JPG/JPEG or WebP · read with FileReader, never uploaded</p>
+          <p id="exif-drop-help" class="mt-1 text-xs text-zinc-400">PNG, JPG/JPEG or WebP · read with FileReader, never uploaded</p>
         </div>
       </div>
 
@@ -220,7 +220,7 @@
             <dt>GPS location</dt><dd><span id="exif-gps-status" class="status-pill" data-state="unknown">Unknown</span></dd>
             <dt>Metadata found</dt><dd><span id="exif-meta-status" class="status-pill" data-state="unknown">Unknown</span></dd>
           </dl>
-          <h4 class="mt-5 mb-2 text-xs font-semibold uppercase tracking-wider text-zinc-500">Detected segments</h4>
+          <h4 class="mt-5 mb-2 text-xs font-semibold uppercase tracking-wider text-zinc-400">Detected segments</h4>
           <ul id="exif-segments" class="segment-list" aria-label="Detected metadata segments">
             <li class="segment-item" data-segment="exif"><span>EXIF / APP1</span><span class="segment-state" data-state="unknown">-</span></li>
             <li class="segment-item" data-segment="jfif"><span>JFIF / APP0</span><span class="segment-state" data-state="unknown">-</span></li>
@@ -229,7 +229,7 @@
             <li class="segment-item" data-segment="pngtext"><span>PNG text chunks (tEXt/iTXt/zTXt)</span><span class="segment-state" data-state="unknown">-</span></li>
             <li class="segment-item" data-segment="gps"><span>GPS IFD</span><span class="segment-state" data-state="unknown">-</span></li>
           </ul>
-          <p id="exif-segment-note" class="mt-3 text-xs leading-relaxed text-zinc-500">Scanned directly from the file bytes with DataView.</p>
+          <p id="exif-segment-note" class="mt-3 text-xs leading-relaxed text-zinc-400">Scanned directly from the file bytes with DataView.</p>
         </div>
 
         <div class="flex flex-col gap-5 lg:col-span-3">
@@ -264,12 +264,12 @@
                   <output id="exif-quality-value" for="exif-quality" class="value-pill">92%</output>
                 </div>
                 <input type="range" id="exif-quality" class="range" min="10" max="100" step="1" value="92" aria-describedby="exif-quality-help">
-                <p id="exif-quality-help" class="mt-1 text-[11px] text-zinc-500">Disabled for PNG, which is always lossless.</p>
+                <p id="exif-quality-help" class="mt-1 text-[11px] text-zinc-400">Disabled for PNG, which is always lossless.</p>
               </div>
             </div>
             <div id="exif-compare" class="compare-badge mt-5" aria-live="polite">
               <div class="compare-col"><span class="compare-k">Before</span><span id="exif-size-before" class="compare-v">-</span></div>
-              <i data-lucide="arrow-right" class="h-4 w-4 text-zinc-500" aria-hidden="true"></i>
+              <i data-lucide="arrow-right" class="h-4 w-4 text-zinc-400" aria-hidden="true"></i>
               <div class="compare-col"><span class="compare-k">After</span><span id="exif-size-after" class="compare-v">-</span></div>
               <span id="exif-size-delta" class="delta-pill" data-trend="neutral">-</span>
             </div>
@@ -373,9 +373,9 @@
             <p class="mode-desc">Memorable Diceware-style passphrase from a built-in word list.</p>
             <div class="flex items-center justify-between">
               <label for="pp-words" class="field-label">Word count</label>
-              <output id="pp-words-value" for="pp-words" class="value-pill">6</output>
+              <output id="pp-words-value" for="pp-words" class="value-pill">8</output>
             </div>
-            <input type="range" id="pp-words" class="range" min="3" max="12" step="1" value="6">
+            <input type="range" id="pp-words" class="range" min="3" max="12" step="1" value="8">
             <div class="mt-4">
               <label for="pp-separator" class="field-label">Separator</label>
               <select id="pp-separator" class="field-input">
@@ -391,7 +391,7 @@
               <label class="opt-check"><input type="checkbox" id="pp-capitalize" checked><span>Capitalize words</span></label>
               <label class="opt-check"><input type="checkbox" id="pp-number"><span>Append a number</span></label>
             </div>
-            <p id="pp-wordlist-info" class="mt-3 text-[11px] text-zinc-500">Word list size: <span id="pp-wordlist-size" class="font-mono">-</span> words</p>
+            <p id="pp-wordlist-info" class="mt-3 text-[11px] text-zinc-400">Word list size: <span id="pp-wordlist-size" class="font-mono">-</span> words</p>
           </div>
 
           <div id="opts-key" class="mode-options" data-mode-panel="key" hidden>
@@ -438,20 +438,20 @@
               <div id="crypto-strength-bar" class="strength-bar" role="meter" aria-label="Secret strength" aria-valuemin="0" aria-valuemax="256" aria-valuenow="0" aria-valuetext="0 bits">
                 <span id="crypto-strength-fill" class="strength-fill" data-strength="0"></span>
               </div>
-              <p id="crypto-entropy-text" class="mt-2 text-xs text-zinc-400">Crack time: <span id="crypto-crack-time" class="font-medium text-zinc-200">-</span> <span class="text-zinc-500">(assuming 10¹² guesses/second offline attack)</span></p>
+              <p id="crypto-entropy-text" class="mt-2 text-xs text-zinc-400">Crack time: <span id="crypto-crack-time" class="font-medium text-zinc-200">-</span> <span class="text-zinc-400">(offline attack at 10¹² guesses/second)</span></p>
             </div>
           </div>
 
           <div class="glass-card p-5">
             <div class="mb-3 flex items-center justify-between">
-              <h3 class="section-label"><i data-lucide="history" class="h-4 w-4" aria-hidden="true"></i> Recent (last 5, this session only)</h3>
+              <h3 class="section-label"><i data-lucide="history" class="h-4 w-4" aria-hidden="true"></i> Recent <span class="font-normal text-zinc-400">· last 5</span></h3>
               <div class="flex items-center gap-3">
-                <label class="opt-check !py-1 text-xs"><input type="checkbox" id="crypto-history-enabled" checked><span>Keep history</span></label>
+                <label class="opt-check text-xs"><input type="checkbox" id="crypto-history-enabled" checked><span>Keep history</span></label>
                 <button type="button" id="crypto-history-clear" class="chip-btn">Clear</button>
               </div>
             </div>
             <ul id="crypto-history" class="history-list" aria-label="Recently generated secrets, masked"></ul>
-            <p id="crypto-history-empty" class="empty-state !py-6"><span>Nothing yet. History lives in memory only and vanishes on reload.</span></p>
+            <p id="crypto-history-empty" class="empty-state !py-6"><span>Nothing yet. History is kept for this session only, in memory, and vanishes on reload.</span></p>
           </div>
         </div>
       </div>
@@ -460,7 +460,7 @@
 
   <!-- ============ FOOTER ============ -->
   <footer class="relative z-10 border-t border-white/10 bg-obsidian/60 backdrop-blur-xl">
-    <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-6 text-xs text-zinc-500 sm:flex-row sm:px-6">
+    <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-6 text-xs text-zinc-400 sm:flex-row sm:px-6">
       <p>© <span id="footer-year">2026</span> PrivacyShield Studio · Released under the <a href="https://github.com/reseachrandomv/privacy-shield-studio/blob/main/LICENSE" class="footer-link" target="_blank" rel="noopener noreferrer">MIT License</a></p>
       <div class="flex items-center gap-4">
         <span class="hidden items-center gap-1.5 sm:inline-flex"><kbd>Alt</kbd>+<kbd>1-4</kbd> switch tools</span>
@@ -481,14 +481,14 @@
         <button type="button" id="trust-modal-close" class="icon-btn" data-close-modal aria-label="Close dialog"><i data-lucide="x" class="h-4 w-4" aria-hidden="true"></i></button>
       </div>
       <p id="trust-modal-desc" class="mt-4 text-sm leading-relaxed text-zinc-300">PrivacyShield Studio is a static page. After the HTML, CSS, fonts and icon library load, every tool runs entirely inside this tab. There is no backend, no analytics, no cookies and no upload endpoint. The page's Content-Security-Policy sets <code class="font-mono text-emerald-300">connect-src 'none'</code>, so the browser itself blocks any fetch, XHR, WebSocket or beacon.</p>
-      <h3 class="mt-5 text-xs font-semibold uppercase tracking-wider text-zinc-500">Native Web APIs doing the work</h3>
+      <h3 class="mt-5 text-xs font-semibold uppercase tracking-wider text-zinc-400">Native Web APIs doing the work</h3>
       <ul class="mt-2 grid gap-2 sm:grid-cols-2">
         <li class="api-item"><i data-lucide="regex" class="h-4 w-4 text-emerald-400" aria-hidden="true"></i><div><strong>RegExp</strong><span>Detects and redacts secrets in your text.</span></div></li>
         <li class="api-item"><i data-lucide="image" class="h-4 w-4 text-cyan-400" aria-hidden="true"></i><div><strong>FileReader + Canvas.toBlob()</strong><span>Reads and re-encodes images in memory.</span></div></li>
         <li class="api-item"><i data-lucide="link" class="h-4 w-4 text-emerald-400" aria-hidden="true"></i><div><strong>URL &amp; URLSearchParams</strong><span>Parses links and removes trackers.</span></div></li>
         <li class="api-item"><i data-lucide="dice-5" class="h-4 w-4 text-cyan-400" aria-hidden="true"></i><div><strong>crypto.getRandomValues()</strong><span>OS-level CSPRNG for keys and passwords.</span></div></li>
       </ul>
-      <h3 class="mt-5 text-xs font-semibold uppercase tracking-wider text-zinc-500">Verify it yourself</h3>
+      <h3 class="mt-5 text-xs font-semibold uppercase tracking-wider text-zinc-400">Verify it yourself</h3>
       <ol class="verify-list mt-2">
         <li>Open DevTools (<kbd>F12</kbd> or <kbd>⌘</kbd>+<kbd>⌥</kbd>+<kbd>I</kbd>) and select the <strong>Network</strong> tab.</li>
         <li>Clear the log, then paste secrets, drop a photo, clean URLs and generate keys.</li>
